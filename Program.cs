@@ -36,7 +36,7 @@ for (var i = 0; i < commands.Count; i++)
                 }
                 else // add file and add to directory size
                 {
-                    var fileSize = long.Parse(itemParts[0]);
+                    var fileSize = int.Parse(itemParts[0]);
                     currentDirectory.Files.Add(new SystemFile(itemParts[1], fileSize));
                     currentDirectory.Size += fileSize;
                 }
@@ -52,10 +52,24 @@ var totalSumLessThan100000 = directories.Select(CalculateDirectorySize).Where(di
 
 Console.WriteLine($"Total size of all directories with at most 10000 size: {totalSumLessThan100000}");
 
+// Puzzle 2
+const int totalCapacity = 70000000;
+const int spaceRequired = 30000000;
+var spaceUsed = CalculateDirectorySize(rootDirectory);
+var spaceRemaining = totalCapacity - spaceUsed;
+
+var (smallestDir, size) = directories
+    .Select(d => (Directory: d, Size: CalculateDirectorySize(d)))
+    .OrderByDescending(x => spaceRemaining + x.Size >= spaceRequired)
+    .ThenBy(x => x.Size)
+    .FirstOrDefault();
+
+Console.WriteLine($"Smallest directory to delete is {smallestDir.Name} with size {size}, freeing the system with a total unused space of {totalCapacity - size}");
+
 /*
  *  Recursively calculates total size of a directory and all its subDirectories
  */
-long CalculateDirectorySize(Directory directory)
+int CalculateDirectorySize(Directory directory)
 {
     if (!directory.SubDirectories.Any()) return directory.Size;
     return directory.Size + directory.SubDirectories.Sum(CalculateDirectorySize);

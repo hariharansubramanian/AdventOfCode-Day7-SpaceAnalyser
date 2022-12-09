@@ -12,5 +12,5 @@ public class Directory
     public Directory? Parent { get; set; }
     public ICollection<Directory> SubDirectories { get; set; } = new List<Directory>();
     public ICollection<SystemFile> Files { get; set; } = new List<SystemFile>();
-    public long Size { get; set; }
+    public int Size { get; set; }
 }
